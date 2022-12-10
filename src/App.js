@@ -14,9 +14,10 @@ export default class App extends React.Component {
     cardTrunfo: '',
     hasTrunfo: '',
     isSaveButtonDisabled: true,
+    listCards: [],
   };
 
-  loadingteste = () => {
+  loading = () => {
     const { cardName, cardDescription, cardImage,
       cardRare, cardAttr1, cardAttr2, cardAttr3 } = this.state;
     const limitUp = 90;
@@ -36,14 +37,38 @@ export default class App extends React.Component {
         isSaveButtonDisabled: true,
       }));
     }
-    // console.log(this.state.isSaveButtonDisabled);
+  };
+
+  clear = () => {
+    this.setState({
+      cardName: '',
+      cardDescription: '',
+      cardAttr1: '0',
+      cardAttr2: '0',
+      cardAttr3: '0',
+      cardImage: '',
+      cardRare: '',
+      cardTrunfo: '',
+      hasTrunfo: '',
+      isSaveButtonDisabled: true,
+    });
+  };
+
+  onSaveButtonClick = () => {
+    const { listCards } = this.state;
+    const dict = this.state;
+    delete dict.listCards;
+    listCards.push(dict);
+    this.setState({
+      listCards,
+    }, this.clear);
   };
 
   onInputChange = ({ target }) => {
     const valor = target.type === 'checkbox' ? target.checked : target.value;
     this.setState({
       [target.name]: valor,
-    }, this.loadingteste);
+    }, this.loading);
   };
 
   render() {

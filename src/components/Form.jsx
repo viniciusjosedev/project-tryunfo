@@ -141,7 +141,7 @@ Form.propTypes = {
   hasTrunfo: PropTypes.string,
   isSaveButtonDisabled: PropTypes.bool,
   onInputChange: PropTypes.func,
-  onSaveButtonClick: PropTypes.string,
+  onSaveButtonClick: PropTypes.func,
 };
 
 Form.defaultProps = {

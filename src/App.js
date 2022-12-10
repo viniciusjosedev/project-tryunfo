@@ -83,7 +83,8 @@ export default class App extends React.Component {
       cardRare,
       cardTrunfo,
       hasTrunfo,
-      isSaveButtonDisabled } = this.state;
+      isSaveButtonDisabled,
+      listCards } = this.state;
     return (
       <div>
         <h1>Tryunfo</h1>
@@ -112,6 +113,24 @@ export default class App extends React.Component {
           cardDescription={ cardDescription }
           hasTrunfo={ hasTrunfo }
         />
+        {
+          listCards.length > 0 ? listCards.map(
+            (elemento) => (
+              <Card
+                key={ elemento.cardName }
+                cardName={ elemento.cardName }
+                cardTrunfo={ elemento.cardTrunfo }
+                cardImage={ elemento.cardImage }
+                cardAttr1={ elemento.cardAttr1 }
+                cardAttr2={ elemento.cardAttr2 }
+                cardAttr3={ elemento.cardAttr3 }
+                cardRare={ elemento.cardRare }
+                cardDescription={ elemento.cardDescription }
+                hasTrunfo={ elemento.hasTrunfo }
+              />
+            ),
+          ) : ''
+        }
       </div>
     );
   }

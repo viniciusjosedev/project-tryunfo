@@ -13,16 +13,37 @@ export default class App extends React.Component {
     cardRare: '',
     cardTrunfo: '',
     hasTrunfo: '',
-    isSaveButtonDisabled: '',
-    onInputChange: '',
-    onSaveButtonClick: '',
+    isSaveButtonDisabled: true,
+  };
+
+  loadingteste = () => {
+    const { cardName, cardDescription, cardImage,
+      cardRare, cardAttr1, cardAttr2, cardAttr3 } = this.state;
+    const limitUp = 90;
+    const limitDown = 0;
+    const soma = 210;
+    if (cardName !== ''
+    && cardDescription !== '' && cardImage !== '' && cardRare !== ''
+    && Number(cardAttr1) <= limitUp && Number(cardAttr1) >= limitDown
+    && Number(cardAttr2) <= limitUp && Number(cardAttr3) >= limitDown
+    && Number(cardAttr3) <= limitUp && Number(cardAttr2) >= limitDown
+    && Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3) <= soma) {
+      this.setState(() => ({
+        isSaveButtonDisabled: false,
+      }));
+    } else {
+      this.setState(() => ({
+        isSaveButtonDisabled: true,
+      }));
+    }
+    // console.log(this.state.isSaveButtonDisabled);
   };
 
   onInputChange = ({ target }) => {
     const valor = target.type === 'checkbox' ? target.checked : target.value;
-    this.setState(() => ({
+    this.setState({
       [target.name]: valor,
-    }));
+    }, this.loadingteste);
   };
 
   render() {
@@ -35,9 +56,7 @@ export default class App extends React.Component {
       cardRare,
       cardTrunfo,
       hasTrunfo,
-      isSaveButtonDisabled,
-      onInputChange,
-      onSaveButtonClick } = this.state;
+      isSaveButtonDisabled } = this.state;
     return (
       <div>
         <h1>Tryunfo</h1>
@@ -52,6 +71,8 @@ export default class App extends React.Component {
           cardRare={ cardRare }
           onInputChange={ this.onInputChange }
           hasTrunfo={ hasTrunfo }
+          isSaveButtonDisabled={ isSaveButtonDisabled }
+          onSaveButtonClick={ this.onSaveButtonClick }
         />
         <Card
           cardName={ cardName }

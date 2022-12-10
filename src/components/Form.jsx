@@ -117,10 +117,10 @@ export default class Form extends React.Component {
         <br />
         <button
           disabled={ isSaveButtonDisabled }
-          onClick={ onSaveButtonClick }
           type="submit"
           id="save-button"
           data-testid="save-button"
+          onClick={ onSaveButtonClick }
         >
           Salvar
         </button>
@@ -139,8 +139,8 @@ Form.propTypes = {
   cardRare: PropTypes.string,
   cardTrunfo: PropTypes.string,
   hasTrunfo: PropTypes.string,
-  isSaveButtonDisabled: PropTypes.string,
-  onInputChange: PropTypes.string,
+  isSaveButtonDisabled: PropTypes.bool,
+  onInputChange: PropTypes.func,
   onSaveButtonClick: PropTypes.string,
 };
 

@@ -11,8 +11,8 @@ export default class App extends React.Component {
     cardAttr3: '',
     cardImage: '',
     cardRare: '',
-    cardTrunfo: '',
-    hasTrunfo: '',
+    cardTrunfo: false,
+    hasTrunfo: false,
     isSaveButtonDisabled: true,
     listCards: [],
   };
@@ -40,6 +40,8 @@ export default class App extends React.Component {
   };
 
   clear = () => {
+    const { cardTrunfo } = this.state;
+    const verific = cardTrunfo === true;
     this.setState({
       cardName: '',
       cardDescription: '',
@@ -48,8 +50,8 @@ export default class App extends React.Component {
       cardAttr3: '0',
       cardImage: '',
       cardRare: '',
-      cardTrunfo: '',
-      hasTrunfo: '',
+      cardTrunfo: false,
+      hasTrunfo: verific,
       isSaveButtonDisabled: true,
     });
   };

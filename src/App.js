@@ -73,6 +73,20 @@ export default class App extends React.Component {
     }, this.loading);
   };
 
+  excluir = ({ target }) => {
+    const { id } = target;
+    const { listCards } = this.state;
+    if (listCards[id].cardTrunfo === true) {
+      this.setState({
+        hasTrunfo: false,
+      });
+    }
+    delete listCards[id];
+    this.setState({
+      listCards,
+    });
+  };
+
   render() {
     const { cardName,
       cardDescription,
@@ -115,19 +129,28 @@ export default class App extends React.Component {
         />
         {
           listCards.length > 0 ? listCards.map(
-            (elemento) => (
-              <Card
-                key={ elemento.cardName }
-                cardName={ elemento.cardName }
-                cardTrunfo={ elemento.cardTrunfo }
-                cardImage={ elemento.cardImage }
-                cardAttr1={ elemento.cardAttr1 }
-                cardAttr2={ elemento.cardAttr2 }
-                cardAttr3={ elemento.cardAttr3 }
-                cardRare={ elemento.cardRare }
-                cardDescription={ elemento.cardDescription }
-                hasTrunfo={ elemento.hasTrunfo }
-              />
+            (elemento, index) => (
+              <div key={ elemento.cardName } className="cartasRenderizadas">
+                <Card
+                  cardName={ elemento.cardName }
+                  cardTrunfo={ elemento.cardTrunfo }
+                  cardImage={ elemento.cardImage }
+                  cardAttr1={ elemento.cardAttr1 }
+                  cardAttr2={ elemento.cardAttr2 }
+                  cardAttr3={ elemento.cardAttr3 }
+                  cardRare={ elemento.cardRare }
+                  cardDescription={ elemento.cardDescription }
+                  hasTrunfo={ elemento.hasTrunfo }
+                />
+                <button
+                  id={ index }
+                  data-testid="delete-button"
+                  type="submit"
+                  onClick={ this.excluir }
+                >
+                  Excluir
+                </button>
+              </div>
             ),
           ) : ''
         }

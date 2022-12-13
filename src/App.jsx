@@ -15,6 +15,7 @@ export default class App extends React.Component {
     hasTrunfo: false,
     isSaveButtonDisabled: true,
     listCards: [],
+    backup: [],
   };
 
   loading = () => {
@@ -57,12 +58,15 @@ export default class App extends React.Component {
   };
 
   onSaveButtonClick = () => {
-    const { listCards } = this.state;
+    const { listCards, backup } = this.state;
     const dict = this.state;
     delete dict.listCards;
+    delete dict.backup;
     listCards.push(dict);
+    backup.push(dict);
     this.setState({
       listCards,
+      backup,
     }, this.clear);
   };
 
@@ -75,16 +79,42 @@ export default class App extends React.Component {
 
   excluir = ({ target }) => {
     const { id } = target;
-    const { listCards } = this.state;
-    if (listCards[id].cardTrunfo === true) {
+    const { listCards, backup } = this.state;
+    const nome = listCards.find((elemento) => elemento.cardName === id);
+    if (nome.cardTrunfo === true) {
       this.setState({
         hasTrunfo: false,
       });
     }
-    delete listCards[id];
-    this.setState({
-      listCards,
+    let posicao;
+    backup.forEach((elemento, index) => {
+      if (elemento === nome) {
+        posicao = index;
+      }
     });
+    console.log(posicao);
+    console.log(backup);
+    delete backup[posicao];
+    const agora = backup;
+    this.setState({
+      listCards: agora,
+      backup: agora,
+    });
+  };
+
+  search = ({ target }) => {
+    const { value } = target;
+    const { backup } = this.state;
+    if (value.length > 0) {
+      const busca = backup.filter((elemento) => elemento.cardName.includes(value));
+      this.setState(() => ({
+        listCards: busca,
+      }));
+    } else {
+      this.setState({
+        listCards: backup,
+      });
+    }
   };
 
   render() {
@@ -127,9 +157,10 @@ export default class App extends React.Component {
           cardDescription={ cardDescription }
           hasTrunfo={ hasTrunfo }
         />
+        <input type="text" data-testid="name-filter" onChange={ this.search } />
         {
           listCards.length > 0 ? listCards.map(
-            (elemento, index) => (
+            (elemento) => (
               <div key={ elemento.cardName } className="cartasRenderizadas">
                 <Card
                   cardName={ elemento.cardName }
@@ -143,7 +174,7 @@ export default class App extends React.Component {
                   hasTrunfo={ elemento.hasTrunfo }
                 />
                 <button
-                  id={ index }
+                  id={ elemento.cardName }
                   data-testid="delete-button"
                   type="submit"
                   onClick={ this.excluir }

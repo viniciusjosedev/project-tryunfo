@@ -3,8 +3,7 @@ import Form from './components/Form';
 import Card from './components/Card';
 
 export default class App extends React.Component {
-  state = {
-    cardName: '',
+  state = { cardName: '',
     cardDescription: '',
     cardAttr1: '',
     cardAttr2: '',
@@ -16,7 +15,8 @@ export default class App extends React.Component {
     isSaveButtonDisabled: true,
     listCards: [],
     backup: [],
-  };
+    checked: false,
+    inputDisabled: false };
 
   loading = () => {
     const { cardName, cardDescription, cardImage,
@@ -41,8 +41,8 @@ export default class App extends React.Component {
   };
 
   clear = () => {
-    const { cardTrunfo } = this.state;
-    const verific = cardTrunfo === true;
+    const { backup } = this.state;
+    const verific = backup.some((elemento) => elemento.cardTrunfo === true);
     this.setState({
       cardName: '',
       cardDescription: '',
@@ -54,18 +54,16 @@ export default class App extends React.Component {
       cardTrunfo: false,
       hasTrunfo: verific,
       isSaveButtonDisabled: true,
+      checked: false,
+      inputDisabled: false,
+      listCards: backup,
     });
   };
 
   onSaveButtonClick = () => {
-    const { listCards, backup } = this.state;
-    const dict = this.state;
-    delete dict.listCards;
-    delete dict.backup;
-    listCards.push(dict);
-    backup.push(dict);
+    const { backup } = this.state;
+    backup.push(this.state);
     this.setState({
-      listCards,
       backup,
     }, this.clear);
   };
@@ -73,43 +71,77 @@ export default class App extends React.Component {
   onInputChange = ({ target }) => {
     const valor = target.type === 'checkbox' ? target.checked : target.value;
     this.setState({
-      [target.name]: valor,
-    }, this.loading);
+      [target.name]: valor }, this.loading);
   };
 
-  excluir = ({ target }) => {
-    const { id } = target;
+  excluir = (name) => {
     const { listCards, backup } = this.state;
-    const nome = listCards.find((elemento) => elemento.cardName === id);
+    const nome = listCards.find((elemento) => elemento.cardName === name);
     if (nome.cardTrunfo === true) {
       this.setState({
         hasTrunfo: false,
       });
     }
-    let posicao;
-    backup.forEach((elemento, index) => {
-      if (elemento === nome) {
-        posicao = index;
-      }
-    });
-    console.log(posicao);
-    console.log(backup);
-    delete backup[posicao];
-    const agora = backup;
+    const agora = backup.filter((elemento) => elemento !== nome);
     this.setState({
-      listCards: agora,
       backup: agora,
+      listCards: agora,
     });
   };
 
+  complet = (verific, busca) => {
+    if (busca !== undefined) {
+      this.setState({
+        checked: verific,
+      }, () => {
+        this.setState({
+          listCards: [busca],
+          inputDisabled: true,
+        });
+      });
+    } else {
+      this.setState({
+        checked: verific,
+      }, () => {
+        this.setState({
+          listCards: [[]],
+          inputDisabled: true,
+        });
+      });
+    }
+  };
+
   search = ({ target }) => {
-    const { value } = target;
+    let { value } = target;
     const { backup } = this.state;
-    if (value.length > 0) {
-      const busca = backup.filter((elemento) => elemento.cardName.includes(value));
-      this.setState(() => ({
-        listCards: busca,
-      }));
+    value = value === 'todas' ? '' : value;
+    value = target.type === 'checkbox' ? target.checked : value;
+    if (String(value).length > 0) {
+      if (value === true) {
+        const busca = backup.find((elemento) => elemento.cardTrunfo === true);
+        this.complet(target.checked, busca);
+      }
+      if (value === false) {
+        this.setState({
+          checked: target.checked,
+        }, () => {
+          this.setState({
+            listCards: backup,
+            inputDisabled: false,
+          });
+        });
+      }
+      if (value === 'normal' || value === 'raro' || value === 'muito raro') {
+        const busca = backup.filter((elemento) => elemento.cardRare === value);
+        this.setState(() => ({
+          listCards: busca,
+        }));
+      } else {
+        const busca = backup.filter((elemento) => elemento.cardName.includes(value));
+        this.setState(() => ({
+          listCards: busca,
+        }));
+      }
     } else {
       this.setState({
         listCards: backup,
@@ -128,7 +160,9 @@ export default class App extends React.Component {
       cardTrunfo,
       hasTrunfo,
       isSaveButtonDisabled,
-      listCards } = this.state;
+      listCards,
+      checked,
+      inputDisabled } = this.state;
     return (
       <div>
         <h1>Tryunfo</h1>
@@ -157,7 +191,32 @@ export default class App extends React.Component {
           cardDescription={ cardDescription }
           hasTrunfo={ hasTrunfo }
         />
-        <input type="text" data-testid="name-filter" onChange={ this.search } />
+        <input
+          type="text"
+          data-testid="name-filter"
+          onChange={ this.search }
+          disabled={ inputDisabled }
+        />
+        <select
+          onClick={ this.search }
+          data-testid="rare-filter"
+          disabled={ inputDisabled }
+        >
+          <option value="todas">Todas</option>
+          <option value="normal">Normal</option>
+          <option value="raro">Raro</option>
+          <option value="muito raro">Muito Raro</option>
+        </select>
+        <label htmlFor="filter-checkbox">
+          Filtrar por Super Trunfo
+          <input
+            type="checkbox"
+            id="filter-checkbox"
+            checked={ checked }
+            data-testid="trunfo-filter"
+            onChange={ this.search }
+          />
+        </label>
         {
           listCards.length > 0 ? listCards.map(
             (elemento) => (
@@ -174,10 +233,10 @@ export default class App extends React.Component {
                   hasTrunfo={ elemento.hasTrunfo }
                 />
                 <button
-                  id={ elemento.cardName }
+                  // id={ elemento.cardName }
                   data-testid="delete-button"
                   type="submit"
-                  onClick={ this.excluir }
+                  onClick={ () => this.excluir(elemento.cardName) }
                 >
                   Excluir
                 </button>

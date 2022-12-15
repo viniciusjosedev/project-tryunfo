@@ -104,7 +104,7 @@ export default class App extends React.Component {
         checked: verific,
       }, () => {
         this.setState({
-          listCards: [[]],
+          listCards: [],
           inputDisabled: true,
         });
       });
